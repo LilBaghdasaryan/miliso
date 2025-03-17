@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import { getCurrentSession } from "@/actions/auth";
 import { SanityLive } from "@/sanity/lib/live";
+import HeaderCategoroySelector from "@/components/layout/HeaderCategoroySelector";
 
 const inter = Inter({subsets: ['latin']})
 
@@ -23,7 +24,10 @@ const  RootLayout = async ({
       <body
         className={`${inter.className} antialiased  bg-white`}
       >
-        <Header user={user} />
+        <Header 
+        user={user}
+        categorySelector={<HeaderCategoroySelector />}
+        />
         {children}
 
         <SanityLive />
