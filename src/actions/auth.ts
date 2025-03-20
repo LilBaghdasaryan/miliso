@@ -1,14 +1,13 @@
 'use server'
-
 import {
     encodeBase32LowerCaseNoPadding,
     encodeHexLowerCase,
 } from '@oslojs/encoding'
 import { sha256 } from '@oslojs/crypto/sha2'
-import { cookies } from 'next/headers'
 
 import type { User, Session } from '@prisma/client'
 import prisma from '@/db/prisma'
+import { cookies } from 'next/headers'
 import { cache } from 'react'
 
 export async function generateSessionToken(): Promise<string> {
@@ -69,10 +68,12 @@ export async function validateSessionToken(
             },
         })
     }
+
     const safeUser = {
         ...user,
         passwordHash: undefined,
     }
+
     return { session, user: safeUser }
 }
 
@@ -80,18 +81,11 @@ export async function invalidateSession(sessionId: string): Promise<void> {
     await prisma.session.delete({ where: { id: sessionId } })
 }
 
-export async function invalidateAllSessions(userId: number): Promise<void> {
-    await prisma.session.deleteMany({
-        where: {
-            userId: userId,
-        },
-    })
-}
-
 export type SessionValidationResult =
-    | { session: Session; user: User & { passwordHash: undefined } }
+    | { session: Session; user: Omit<User, 'passwordHash'> }
     | { session: null; user: null }
 
+/* Cookies */
 export async function setSessionTokenCookie(
     token: string,
     expiresAt: Date
@@ -151,7 +145,7 @@ export const registerUser = async (email: string, password: string) => {
 
         const safeUser = {
             ...user,
-            passwordHash: '',
+            passwordHash: undefined,
         }
 
         return {
