@@ -119,3 +119,4 @@ const ProcductPage = async ({ params }: ProductPageProp) => {
 };
 
 export default ProcductPage;
+
